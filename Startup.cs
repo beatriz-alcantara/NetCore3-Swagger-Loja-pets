@@ -17,9 +17,13 @@ namespace Loja_Pets
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(Microsoft.Extensions.Hosting.IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var appsettings = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFie("appsettings.json")
+                .Build();
+            Configuration = appsettings;
         }
 
         public IConfiguration Configuration { get; }
@@ -27,6 +31,10 @@ namespace Loja_Pets
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            ConnectionStrings con = new ConnectionStrings();
+            Configuration.Bind("ConnectionStrings", con);
+            services.AddSingleton(con);
+
             services.AddControllers();
             services.AddMvc();
 
